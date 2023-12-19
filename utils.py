@@ -1,3 +1,4 @@
+import csv
 import os
 import time
 
@@ -94,5 +95,18 @@ def visualize(model, data, save=True):
 
 
 def log_results(loss_meter_dict):
-    for loss_name, loss_meter in loss_meter_dict.items():
-        print(f"{loss_name}: {loss_meter.avg:.5f}")
+    base_directory = os.getcwd()
+    data_folder = os.path.join(base_directory, 'data')
+    if not os.path.exists(data_folder):
+        os.makedirs(data_folder)
+    csv_file = os.path.join(data_folder, 'losses.csv')
+
+    file_exists = os.path.isfile(csv_file)
+    headers = list(loss_meter_dict.keys())  # Using the loss names as headers
+    with open(csv_file, mode='a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=headers)
+
+        if not file_exists:
+            writer.writeheader()
+        log_data = {loss_name: f"{loss_meter.avg:.5f}" for loss_name, loss_meter in loss_meter_dict.items()}
+        writer.writerow(log_data)
