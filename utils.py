@@ -1,3 +1,4 @@
+import os
 import time
 
 import matplotlib.pyplot as plt
@@ -83,8 +84,14 @@ def visualize(model, data, save=True):
         ax.axis("off")
     plt.show()
     if save:
-        fig.savefig(f"colorization_{time.time()}.png")
-
+        base_directory = os.getcwd()
+        save_folder = os.path.join(base_directory, 'data', 'stages')
+        if not os.path.exists(save_folder):
+            os.makedirs(save_folder)
+        file_name = f"colorization_{time.time()}.png"
+        file_path = os.path.join(save_folder, file_name)
+        fig.savefig(file_path)
+        
 
 def log_results(loss_meter_dict):
     for loss_name, loss_meter in loss_meter_dict.items():
