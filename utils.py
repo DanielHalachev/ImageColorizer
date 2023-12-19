@@ -91,7 +91,7 @@ def visualize(model, data, save=True):
         file_name = f"colorization_{time.time()}.png"
         file_path = os.path.join(save_folder, file_name)
         fig.savefig(file_path)
-        
+
 
 def log_results(loss_meter_dict):
     for loss_name, loss_meter in loss_meter_dict.items():
