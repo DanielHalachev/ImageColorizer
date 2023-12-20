@@ -1,4 +1,3 @@
-import argparse
 
 
 def train_model(model, train_dataloader, epochs, display_every=100):
@@ -21,6 +20,7 @@ def train_model(model, train_dataloader, epochs, display_every=100):
 if __name__ == "__main__":
     import glob
     import os
+    import argparse
 
     import matplotlib.pyplot as plt
     import numpy as np
