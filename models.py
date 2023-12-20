@@ -61,22 +61,28 @@ class PatchDiscriminator(nn.Module):
     def __init__(self, nfd=64):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Conv2d(3, nfd, 4, 2, 1, bias=True),
-            nn.LeakyReLU(0.2, True),
-
-            nn.Conv2d(nfd, nfd * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(nfd * 2),
-            nn.LeakyReLU(0.2, True),
-
-            nn.Conv2d(nfd * 2, nfd * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(nfd * 4),
-            nn.LeakyReLU(0.2, True),
-
-            nn.Conv2d(nfd * 4, nfd * 8, 4, 1, 1, bias=False),
-            nn.BatchNorm2d(nfd * 8),
-            nn.LeakyReLU(0.2, True),
-
-            nn.Conv2d(nfd * 8, nfd * 16, 4, 1, 1, bias=True),
+            nn.Sequential(
+                nn.Conv2d(3, nfd, 4, 2, 1, bias=True),
+                nn.LeakyReLU(0.2, True),
+            ),
+            nn.Sequential(
+                nn.Conv2d(nfd, nfd * 2, 4, 2, 1, bias=False),
+                nn.BatchNorm2d(nfd * 2),
+                nn.LeakyReLU(0.2, True),
+            ),
+            nn.Sequential(
+                nn.Conv2d(nfd * 2, nfd * 4, 4, 2, 1, bias=False),
+                nn.BatchNorm2d(nfd * 4),
+                nn.LeakyReLU(0.2, True),
+            ),
+            nn.Sequential(
+                nn.Conv2d(nfd * 4, nfd * 8, 4, 1, 1, bias=False),
+                nn.BatchNorm2d(nfd * 8),
+                nn.LeakyReLU(0.2, True),
+            ),
+            nn.Sequential(
+                nn.Conv2d(nfd * 8, nfd * 16, 4, 1, 1, bias=True),
+            ),
         )
 
     def forward(self, x):
