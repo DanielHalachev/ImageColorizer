@@ -32,6 +32,10 @@ if __name__ == "__main__":
     from dataset import make_dataloaders
     from utils import create_loss_meters, update_losses, log_results, visualize
 
+    EPOCHS = 100
+    TRAINING_IMAGES = 15_000
+    TOTAL_IMAGES = 16_000
+
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Start training a model')
     parser.add_argument('dataset_path', type=str, help='Path to the dataset folder')
@@ -51,10 +55,10 @@ if __name__ == "__main__":
 
     # Forming datasets
     np.random.seed(500)
-    paths_subset = np.random.choice(paths, 20_000, replace=False)
-    rand_indexes = np.random.permutation(20_000)
-    train_indexes = rand_indexes[:18000]
-    validate_indexes = rand_indexes[18000:]
+    paths_subset = np.random.choice(paths, TOTAL_IMAGES, replace=False)
+    rand_indexes = np.random.permutation(TOTAL_IMAGES)
+    train_indexes = rand_indexes[:TRAINING_IMAGES]
+    validate_indexes = rand_indexes[TRAINING_IMAGES:]
     train_paths = paths_subset[train_indexes]
     val_paths = paths_subset[validate_indexes]
     print(f"Images withdrawn with their paths")
@@ -72,7 +76,7 @@ if __name__ == "__main__":
 
     main_model = MainModel()
     print(f"Training commenced")
-    train_model(main_model, train_dl, 100)
+    train_model(main_model, train_dl, EPOCHS)
 
     # saving weights for later
     torch.save(main_model, "model.pt")
