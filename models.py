@@ -60,30 +60,23 @@ class Unet(nn.Module):
 class PatchDiscriminator(nn.Module):
     def __init__(self, nfd=64):
         super().__init__()
-        self.model = nn.Sequential(
-            nn.Sequential(
-                nn.Conv2d(3, nfd, 4, 2, 1, bias=True),
-                nn.LeakyReLU(0.2, True),
-            ),
-            nn.Sequential(
-                nn.Conv2d(nfd, nfd * 2, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(nfd * 2),
-                nn.LeakyReLU(0.2, True),
-            ),
-            nn.Sequential(
-                nn.Conv2d(nfd * 2, nfd * 4, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(nfd * 4),
-                nn.LeakyReLU(0.2, True),
-            ),
-            nn.Sequential(
-                nn.Conv2d(nfd * 4, nfd * 8, 4, 1, 1, bias=False),
-                nn.BatchNorm2d(nfd * 8),
-                nn.LeakyReLU(0.2, True),
-            ),
-            nn.Sequential(
-                nn.Conv2d(nfd * 8, nfd * 16, 4, 1, 1, bias=True),
-            ),
-        )
+        # No normalization in first block
+        model = [self.get_layers(3, nfd, normalization=False)]
+        # no stride = 2 in last block
+        model += [self.get_layers(nfd * 2 ** i, nfd * 2 ** (i + 1), s=1 if i == 2 else 2)
+                  for i in range(3)]
+        # No normalization or action layer in last block
+        model += [self.get_layers(nfd * 2 ** 3, 1, s=1, normalization=False, action=False)]
+        self.model = nn.Sequential(*model)
+
+    def get_layers(self, ni, nf, k=4, s=2, p=1, normalization=True, action=True):
+        layers = [
+            nn.Conv2d(ni, nf, k, s, p, bias=not normalization)]
+        if normalization:
+            layers += [nn.BatchNorm2d(nf)]
+        if action:
+            layers += [nn.LeakyReLU(0.2, True)]
+        return nn.Sequential(*layers)
 
     def forward(self, x):
         return self.model(x)
