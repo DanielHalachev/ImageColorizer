@@ -79,4 +79,4 @@ if __name__ == "__main__":
     train_model(main_model, train_dl, EPOCHS)
 
     # saving weights for later
-    torch.save(main_model, "model.pt")
+    torch.save(main_model.state_dict(), "model.pt")
