@@ -1,7 +1,21 @@
 
 
 def train_model(model, train_dataloader, epochs, display_every=100):
-    # visualization_data = next(iter(val_dl))  # getting a batch for visualizing the model output after fixed intervals
+    """
+    Train the specified model using the provided data loader.
+
+    :param model: (nn.Module) The PyTorch model to be trained.
+    :type model: nn.Module
+    :param train_dataloader: (DataLoader) The DataLoader for training data.
+    :type train_dataloader: DataLoader
+    :param epochs: (int) The number of training epochs.
+    :type epochs: int
+    :param display_every: (int) Display training progress every specified number of iterations (default is 100).
+    :type display_every: int
+
+    Example:
+        train_model(my_model, train_data_loader, epochs=10, display_every=50)
+    """
     for e in range(epochs):
         loss_meter_dict = create_loss_meters()
         i = 0

@@ -9,19 +9,34 @@ from skimage.color import lab2rgb
 
 
 class AverageMeter:
+    """
+    A handy class for storing an array of values and automatically calculating their average
+    """
     def __init__(self):
         self.reset()
 
     def reset(self):
+        """
+        Reset count and average metrics
+        """
         self.count, self.avg, self.sum = [0.] * 3
 
     def update(self, val, count=1):
+        """
+        Update count and average metrics after new value is added
+        """
         self.count += count
         self.sum += count * val
         self.avg = self.sum / self.count
 
 
 def create_loss_meters():
+    """
+    Create a dictionary of AverageMeter instances for various loss components.
+
+    :return: A dictionary containing AverageMeter instances for different loss components.
+    :rtype: dictionary
+    """
     loss_D_fake = AverageMeter()
     loss_D_real = AverageMeter()
     loss_D = AverageMeter()
@@ -38,6 +53,17 @@ def create_loss_meters():
 
 
 def update_losses(model, loss_meter_dict, count):
+    """
+    Update the loss meters with the corresponding losses from the model.
+
+    :param model: The PyTorch model containing loss values.
+    :type model: torch.nn.Module
+    :param loss_meter_dict: A dictionary of AverageMeter instances for different loss components.
+    :type loss_meter_dict: dict
+    :param count: The count of occurrences of the losses.
+    :type count: int
+    """
+
     for loss_name, loss_meter in loss_meter_dict.items():
         loss = getattr(model, loss_name)
         loss_meter.update(loss.item(), count=count)
@@ -45,9 +71,15 @@ def update_losses(model, loss_meter_dict, count):
 
 def lab_to_rgb(L, ab):
     """
-    Takes a batch of images
-    """
+    Convert L*a*b* color space to RGB color space for a batch of images.
 
+    :param L: L channel of the images.
+    :type L: torch.Tensor
+    :param ab: A and B channels of the images.
+    :type ab: torch.Tensor
+
+    :return: RGB images.
+    """
     L = (L + 1.) * 50.
     ab = ab * 110.
     Lab = torch.cat([L, ab], dim=1).permute(0, 2, 3, 1).cpu().numpy()
@@ -59,6 +91,17 @@ def lab_to_rgb(L, ab):
 
 
 def visualize(model, data, save=True):
+    """
+    Visualize model outputs and optionally save the visualization. Useful for displaying intermediate training results
+
+    :param model: The PyTorch model.
+    :type model: torch.nn.Module
+    :param data: Input data for visualization.
+    :type data: dict
+    :param save: Whether to save the visualization (default is True).
+    :type save: bool
+
+    """
     model.net_G.eval()
     with torch.no_grad():
         model.setup_input(data)
@@ -95,6 +138,12 @@ def visualize(model, data, save=True):
 
 
 def log_results(loss_meter_dict):
+    """
+    Log the average losses to a CSV file.
+
+    :param loss_meter_dict: A dictionary containing AverageMeter instances for different loss components.
+    :type loss_meter_dict: dict
+    """
     base_directory = os.getcwd()
     data_folder = os.path.join(base_directory, 'data')
     if not os.path.exists(data_folder):
