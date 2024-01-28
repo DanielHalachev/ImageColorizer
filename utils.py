@@ -126,7 +126,7 @@ def visualize(model, data, save=True):
         ax = plt.subplot(3, 5, i + 1 + 10)
         ax.imshow(real_imgs[i])
         ax.axis("off")
-    plt.show()
+    plt.show(block=False)
     if save:
         base_directory = os.getcwd()
         save_folder = os.path.join(base_directory, 'data', 'stages')
